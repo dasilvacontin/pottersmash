@@ -4,7 +4,6 @@ function onClick (e) {
     if (activeBuff != null) {
         activeBuff.querySelector(".item").style.backgroundColor = "cornflowerblue"
     }
-    debugger
     activeBuff = this;
     activeBuff.querySelector(".item").style.backgroundColor = "#007777"
 }
