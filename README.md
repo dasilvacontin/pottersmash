@@ -4,7 +4,7 @@ Clone, `cd` in, and do `npm install`.
 
 ## Scripts
 
-`npm run test` will check your JavaScript for issues.
+`npm test` will check your JavaScript for issues.
 
 `npm run build` will generate builds for the different apps.
 
