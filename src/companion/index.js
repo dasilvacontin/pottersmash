@@ -17,7 +17,6 @@ function drawCircles (canvas) {
 
 function resized () {
   // Setup canvas size
-  console.log(screen.orientation)
   var orientation = screen.orientation || screen.mozOrientation || screen.msOrientation
   if (orientation.type === 'landscape-primary' || orientation.type === 'landscape-secondary') {
     window.onclick = function () {
