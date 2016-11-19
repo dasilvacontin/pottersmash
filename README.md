@@ -2,4 +2,10 @@
 
 Clone, `cd` in, and do `npm install`.
 
-`npm run watch` will watch for changes in your js, it will validate it, and it will generate builds for the different apps.
+## Scripts
+
+`npm run test` will check your JavaScript for issues.
+
+`npm run build` will generate builds for the different apps.
+
+`npm run watch` will execute `test` and `build` when changes are detected in your JavaScript.
