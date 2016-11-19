@@ -1,7 +1,39 @@
 <!DOCTYPE html>
-<head></head>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+  body {
+    margin: 0;
+    max-height: 100%;
+  }
+
+  .orientation-warning {
+    display: block;
+  }
+
+  .orientation-ok {
+    display: none;
+    height: 100%;
+  }
+
+  @media screen and (orientation:landscape) {
+    .orientation-warning {
+      display: none;
+    }
+
+    .orientation-ok {
+      display: block;
+    }
+  }
+  </style>
+</head>
 <body>
-  <h1>Companion</h1>
+  <div class="orientation-warning">
+    <h2>Please rotate your phone</h2>
+  </div>
+  <div id="controllers" class="orientation-ok">
+    <canvas id="player-controller"></canvas>
+  </div>
   <script src="companion.js"></script>
 </body>
 </html>
