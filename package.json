@@ -6,7 +6,7 @@
   "scripts": {
     "build": "browserify src/companion/index.js -o public/companion.js && browserify src/host/index.js -o public/host.js",
     "test": "standard",
-    "watch": "chokidar 'src/**/*.js' -c 'npm run test; npm run build'"
+    "watch": "chokidar 'src/**/*.js' -c 'npm run test && npm run build'"
   },
   "repository": {
     "type": "git",
