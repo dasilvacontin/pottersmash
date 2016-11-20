@@ -39,9 +39,9 @@ function getTimeRemaining () {
 }
 
 function endGame () {
+  console.log('endgame')
   finished = true
-  // show screen of round over
-
+  document.querySelector('#round').style.display = 'flex'
   // reset all
 }
 
@@ -196,10 +196,6 @@ function update () {
     }
     timer.innerHTML = t + 's'
   }
-
-  let t = getTimeRemaining()
-  timer.innerHTML = t + 's'
-  // console.log(t)
 }
 
 function dropSequence (i) {

@@ -7,6 +7,7 @@
     }
 
     body {
+      font-family: Potter;
       margin: 0;
     }
 
@@ -15,7 +16,6 @@
       top: 0;
       width: 100%;
 
-      font-family: Potter;
       font-size: 100px;
       text-align: center;
       color: white;
@@ -27,9 +27,55 @@
       box-sizing: content-box;
       background: rgba(0, 0, 0, 0.7);
     }
+
+    #round {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      background: black;
+      display: table-cell;
+      display: none;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      color: white
+    }
+    #over {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    
+      background: black;
+      display: table-cell;
+      display:none;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      color: white
+    }
+
+
+  #waiting > p { font-size: 60px; color: white }
+
+
   </style>
 </head>
 <body>
+  <div id="round">
+    <p>Next round!</p>
+  </div>
+
+  <div id="over">
+    <p>Game Over!</p>
+  </div>
+
   <div id="countdown"><span>18s</span></div>
   <script src="host.js"></script>
 </body>
