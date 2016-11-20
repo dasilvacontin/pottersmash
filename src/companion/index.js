@@ -1,4 +1,4 @@
-/* globals screen, Element, prompt */
+/* globals screen, Element, prompt, Image */
 // companion main file
 
 const { Joystick } = require('./joystick.js')
@@ -12,6 +12,14 @@ const colors = [
   '#0b9ed1',
   '#21a047'
 ]
+const houseNames = [
+  'gryffindor',
+  'hufflepuff',
+  'ravenclaw',
+  'slytherin'
+]
+const shield = new Image()
+shield.src = `/images/${houseNames[house]}_scaled.png`
 
 socket.on('connect', () => {
   socket.emit('player-join', house)
@@ -29,6 +37,11 @@ function updateJoysticks () {
   var ctx = canvas.getContext('2d')
   ctx.fillStyle = colors[house]
   ctx.fillRect(0, 0, canvas.width, canvas.height)
+  ctx.drawImage(
+    shield,
+    canvas.width / 2 - shield.width / 2,
+    canvas.height / 2 - shield.height / 2
+  )
 
   var radius = canvas.height * 0.30
   ctx.strokeStyle = 'white'
