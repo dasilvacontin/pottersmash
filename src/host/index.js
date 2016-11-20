@@ -1,7 +1,10 @@
 /* eslint-disable no-debugger */
+const io = require('socket.io-client')
 window.PIXI = require('phaser/build/custom/pixi')
 window.p2 = require('phaser/build/custom/p2')
 const Phaser = window.Phaser = require('phaser/build/custom/phaser-split')
+
+const socket = io()
 const map = require('./mapGenerator.js').getMap(15, 9)
 
 const game = new Phaser.Game(
@@ -12,8 +15,8 @@ const game = new Phaser.Game(
   { preload, create, update, render }
 )
 
-let playerGroup, cursors, keys, bulletGroup, wallGroup
-let players, bullets, walls
+let wizardGroup, cursors, keys, bulletGroup, wallGroup
+let wizards, bullets, walls
 // let fire = false
 // let fireKey
 let nextFire
@@ -26,13 +29,13 @@ function preload () {
   game.load.image('wall', 'images/wall.jpg')
 }
 
-function createPlayer (tx, ty) {
-  const player = playerGroup.create(tx * 100, ty * 100, 'wizard')
-  player.anchor.x = 0.5
-  player.body.setSize(80, 80, 0, 0)
-  player.body.bounce.setTo(0.8, 0.8)
-  player.body.collideWorldBounds = true
-  players.push(player)
+function createWizard (tx, ty) {
+  const wizard = wizardGroup.create(tx * 100, ty * 100, 'wizard')
+  wizard.anchor.x = 0.5
+  wizard.body.setSize(80, 80, 0, 0)
+  wizard.body.bounce.setTo(0.8, 0.8)
+  wizard.body.collideWorldBounds = true
+  wizards.push(wizard)
 }
 
 function create () {
@@ -60,11 +63,11 @@ function create () {
     }
   }
 
-  playerGroup = game.add.group()
-  playerGroup.enableBody = true
-  playerGroup.physicsBodyType = Phaser.Physics.ARCADE
+  wizardGroup = game.add.group()
+  wizardGroup.enableBody = true
+  wizardGroup.physicsBodyType = Phaser.Physics.ARCADE
 
-  players = []
+  wizards = []
 
   let tx, ty
 
@@ -73,7 +76,7 @@ function create () {
       if (map[tx][ty] === 0) break
     }
     if (map[tx][ty] === 0) {
-      createPlayer(tx, ty)
+      createWizard(tx, ty)
       break
     }
   }
@@ -84,7 +87,7 @@ function create () {
       if (map[tx][ty] === 0) break
     }
     if (map[tx][ty] === 0) {
-      createPlayer(tx, ty)
+      createWizard(tx, ty)
       break
     }
   }
@@ -94,7 +97,7 @@ function create () {
       if (map[tx][ty] === 0) break
     }
     if (map[tx][ty] === 0) {
-      createPlayer(tx, ty)
+      createWizard(tx, ty)
       break
     }
   }
@@ -104,7 +107,7 @@ function create () {
       if (map[tx][ty] === 0) break
     }
     if (map[tx][ty] === 0) {
-      createPlayer(tx, ty)
+      createWizard(tx, ty)
       break
     }
   }
@@ -135,28 +138,28 @@ const SPEED = 200
 const FSPEED = 300
 
 function update () {
-  game.physics.arcade.collide(playerGroup)
-  game.physics.arcade.collide(playerGroup, bulletGroup, bulletCollided)
-  game.physics.arcade.collide(playerGroup, wallGroup)
+  game.physics.arcade.collide(wizardGroup)
+  game.physics.arcade.collide(wizardGroup, bulletGroup, bulletCollided)
+  game.physics.arcade.collide(wizardGroup, wallGroup)
   game.physics.arcade.collide(wallGroup, bulletGroup, bulletCollidedWall)
 
-  const player = players[0]
-  player.body.velocity.x = SPEED * Number(keys.right.isDown) - SPEED * Number(keys.left.isDown)
-  player.body.velocity.y = SPEED * Number(keys.down.isDown) - SPEED * Number(keys.up.isDown)
+  const wizard = wizards[0]
+  wizard.body.velocity.x = SPEED * Number(keys.right.isDown) - SPEED * Number(keys.left.isDown)
+  wizard.body.velocity.y = SPEED * Number(keys.down.isDown) - SPEED * Number(keys.up.isDown)
 
   if (game.time.now > nextFire) {
     let fx = Number(cursors.right.isDown) - Number(cursors.left.isDown)
     let fy = Number(cursors.down.isDown) - Number(cursors.up.isDown)
     if (fx !== 0 || fy !== 0) {
-      fireBullet(player, Number(fx), Number(fy))
+      fireBullet(wizard, Number(fx), Number(fy))
       nextFire = game.time.now + FIRERATE
     }
   }
 }
 
-function fireBullet (player, x, y) {
+function fireBullet (wizard, x, y) {
   const bullet = bulletGroup.create(
-    player.x + 40 * x + (x < 0 ? -30 : 0), player.y + 40 + (y < 0 ? 60 : 50) * y,
+    wizard.x + 40 * x + (x < 0 ? -30 : 0), wizard.y + 40 + (y < 0 ? 60 : 50) * y,
     'bullet5'
   )
   // bullet.anchor.x = 0.5
@@ -167,10 +170,10 @@ function fireBullet (player, x, y) {
   bullets.push(bullet)
 }
 
-function bulletCollided (player, bullet) {
-  playerGroup.remove(player, false)
+function bulletCollided (wizard, bullet) {
+  wizardGroup.remove(wizard, false)
   bulletGroup.remove(bullet, true)
-  console.log('Bullet collided with ' + player)
+  console.log('Bullet collided with ' + wizard)
 }
 
 function bulletCollidedWall (wall, bullet) {
@@ -179,7 +182,7 @@ function bulletCollidedWall (wall, bullet) {
 }
 
 function render () {
-  players.forEach(player => game.debug.body(player))
+  wizards.forEach(wizard => game.debug.body(wizard))
   bullets.forEach(bullet => game.debug.body(bullet))
   walls.forEach(wall => game.debug.body(wall))
 }
@@ -190,3 +193,40 @@ function resize () {
 }
 
 window.onresize = resize
+
+const players = {}
+
+class Player {
+  constructor (id, house) {
+    this.id = id
+    this.house = house
+    this.input = [[0, 0], [0, 0]]
+  }
+
+  updateInput (input) {
+    this.input = input
+  }
+}
+
+function onPlayerJoin (socketId, house) {
+  console.log('select-house', socketId, house)
+  const player = new Player(socketId, house)
+  players[player.id] = player
+}
+
+function onInputUpdate (socketId, inputData) {
+  console.log('input-data', socketId, inputData)
+  const player = players[socketId]
+  if (!player) return
+  player.updateInput = inputData
+}
+
+socket.on('connect', () => {
+  console.log('socket connected to server')
+  socket.emit('host-game')
+
+  socket.on('player-join', onPlayerJoin)
+  socket.on('input-update', onInputUpdate)
+})
+
+window.startGame = function () {}
