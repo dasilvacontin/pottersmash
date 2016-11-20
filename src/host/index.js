@@ -15,7 +15,7 @@ const game = new Phaser.Game(
   { preload, create, update, render }
 )
 
-let wizardGroup, bulletGroup, wallGroup
+let wizardGroup, bulletGroup, wallGroup, killWallGroup
 let cursors, keys
 let wizards, bullets, walls
 let playerWizards = []
@@ -30,6 +30,7 @@ let nextFire
 const FIRERATE = 300
 let startGameDate
 let finished = false
+let sequence = false
 
 function getTimeRemaining () {
   let t = Date.parse(new Date()) - startGameDate
@@ -71,6 +72,10 @@ function create () {
   game.physics.startSystem(Phaser.Physics.ARCADE)
   game.physics.arcade.gravity.y = 0
   game.physics.arcade.sortDirection = Phaser.Physics.Arcade.BOTTOM_TOP
+
+  killWallGroup = game.add.group()
+  killWallGroup.enableBody = true
+  killWallGroup.physicsBodyType = Phaser.Physics.ARCADE
 
   walls = []
   wallGroup = game.add.group()
@@ -163,6 +168,7 @@ const timer = document.querySelector('#countdown > span')
 function update () {
   game.physics.arcade.collide(wizardGroup)
   game.physics.arcade.collide(wizardGroup, bulletGroup, bulletCollided)
+  game.physics.arcade.collide(killWallGroup, wizardGroup, wallCollided)
   game.physics.arcade.collide(wizardGroup, wallGroup)
   game.physics.arcade.collide(wallGroup, bulletGroup, bulletCollidedWall)
 
@@ -182,10 +188,45 @@ function update () {
     }
   } else updateAllWizards()
 
+<<<<<<< HEAD
   if (!finished) {
     let t = getTimeRemaining()
     timer.innerHTML = t + 's'
   }
+=======
+  if (getTimeRemaining() <= 5 && !sequence) {
+    sequence = true
+    dropSequence(1)
+  }
+
+  let t = getTimeRemaining()
+  timer.innerHTML = t + 's'
+  // console.log(t)
+}
+
+function dropSequence (i) {
+  if (i > map.length / 2) return
+
+  for (let k = i; k < map.length - i; ++k) {
+    drawBlock(k, i)
+    drawBlock(map.length - 1 - i, k)
+    drawBlock(k, map[0].length - 1 - i)
+    drawBlock(i, k)
+  }
+
+  setTimeout(function () {
+    dropSequence(i + 1)
+  }, 1500)
+}
+
+function drawBlock (x, y) {
+  const wall = killWallGroup.create(100 * x, 100 * y, 'wall')
+  wall.anchor.x = 0.5
+  wall.body.setSize(100, 100, 0, 0)
+  wall.body.collideWorldBounds = false
+  wall.body.immovable = true
+  wall.body.moves = false
+  // walls.push(wall)
 }
 
 function updateAllWizards () {
@@ -194,7 +235,6 @@ function updateAllWizards () {
     let input = playerWizards[i].input
 
     moveWizard(wizard, input[0])
-    wizard.rotation += 0.05
 
     if (game.time.now > nextFire && (input[1][0] || input[1][1])) {
       fireBullet(wizard, input[1][0], input[1][1] * -1)
@@ -222,23 +262,21 @@ function fireBullet (wizard, x, y) {
   console.log(house)
 
   // bullet.anchor.x = 0.5
-  bullet.body.setSize(25, 25, 0, 0)
+  bullet.body.setSize(50, 50, 0, 0)
   bullet.body.collideWorldBounds = true
   bullet.body.velocity.y = FSPEED * y
   bullet.body.velocity.x = FSPEED * x
   bullets.push(bullet)
-
   let angleRot = 2 * Math.PI / 8
-  console.log(wizard.rotation)
-  if (x === 0 && y === 0) wizard.rotation = 0
-  if (x === 0 && y === -1) wizard.rotation = angleRot
-  if (x === 0 && y === 1) wizard.rotation = angleRot * 2
-  if (x === -1 && y === 0) wizard.rotation = angleRot * 3
-  if (x === -1 && y === 1) wizard.rotation = angleRot * 4
-  if (x === -1 && y === -1) wizard.rotation = angleRot * 5
+  if (x === 0 && y === 0) wizard.rotation = angleRot * 4
+  if (x === 0 && y === 1) wizard.rotation = 0
+  if (x === 1 && y === 1) wizard.rotation = angleRot * 7
   if (x === 1 && y === 0) wizard.rotation = angleRot * 6
-  if (x === 1 && y === -1) wizard.rotation = angleRot * 7
-  if (x === 1 && y === 1) wizard.rotation = angleRot * 8
+  if (x === 1 && y === -1) wizard.rotation = angleRot * 5
+  if (x === 0 && y === -1) wizard.rotation = angleRot * 4
+  if (x === -1 && y === -1) wizard.rotation = angleRot * 3
+  if (x === -1 && y === 0) wizard.rotation = angleRot * 2
+  if (x === -1 && y === 1) wizard.rotation = angleRot
 }
 
 function bulletCollided (wizard, bullet) {
@@ -250,6 +288,10 @@ function bulletCollided (wizard, bullet) {
 function bulletCollidedWall (wall, bullet) {
   bulletGroup.remove(bullet, true)
   console.log('Bullet collided with ' + wall)
+}
+
+function wallCollided (wall, wizard) {
+  wizardGroup.remove(wizard, false)
 }
 
 function render () {
