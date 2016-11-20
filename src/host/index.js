@@ -20,6 +20,12 @@ let wizardGroup, bulletGroup, wallGroup
 let wizards, bullets, walls
 let playerWizards = []
 let wizardsByHouse = [[], [], [], []]
+let houseNumSprite = {
+  0: 'wizred',
+  1: 'wizyellow',
+  2: 'wizblue',
+  3: 'wizgreen'
+}
 // let fire = false
 // let fireKey
 let nextFire
@@ -195,6 +201,7 @@ function fireBullet (wizard, x, y) {
   bullet.body.velocity.y = FSPEED * y
   bullet.body.velocity.x = FSPEED * x
   bullets.push(bullet)
+  wizard.angle += 10
 }
 
 function bulletCollided (wizard, bullet) {
@@ -265,6 +272,7 @@ window.startGame = function () {
       let player = house[Math.floor(Math.random() * house.length)]
       console.log('Selected ' + player.id)
       playerWizards.push(player)
+      wizards[playerWizards.length - 1].loadTexture(houseNumSprite[houseId], 0)
     }
   }
 }
