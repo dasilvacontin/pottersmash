@@ -5,6 +5,11 @@
   body {
     margin: 0;
     max-height: 100%;
+    font-family: serif;
+  }
+
+  .hide {
+    display: none;
   }
 
   .orientation-warning {
@@ -14,6 +19,19 @@
   .orientation-ok {
     display: none;
     height: 100%;
+  }
+
+  #player-controller {
+    display: none;
+  }
+
+  #house-selector {
+    text-align: center;
+    margin: auto;
+  }
+
+  #house-selector img {
+    width: 22%;
   }
 
   @media screen and (orientation:landscape) {
@@ -32,7 +50,22 @@
     <h2>Please rotate your phone</h2>
   </div>
   <div id="controllers" class="orientation-ok">
-    <canvas id="player-controller"></canvas>
+    <div id="house-selector">
+      <h1>Choose your house</h1>
+      <span>
+        <img src="/images/gryffindor_scaled.png" alt="Griffindor" />
+      </span>
+      <span>
+        <img src="/images/hufflepuff_scaled.png" alt="Hufflepuff" />
+      </span>
+      <span>
+        <img src="/images/ravenclaw_scaled.png" alt="Ravenclaw" />
+      </span>
+      <span>
+        <img src="/images/slytherin_scaled.png" alt="Slytherin" />
+      </span>
+    </div>
+    <canvas class="hide" id="player-controller"></canvas>
   </div>
   <script src="companion.js"></script>
 </body>

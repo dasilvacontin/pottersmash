@@ -16,7 +16,7 @@ const game = new Phaser.Game(
 )
 
 let wizardGroup, bulletGroup, wallGroup
-// let cursors, keys
+let cursors, keys
 let wizards, bullets, walls
 let playerWizards = []
 let wizardsByHouse = [[], [], [], []]
@@ -26,10 +26,27 @@ let houseNumSprite = {
   2: 'wizblue',
   3: 'wizgreen'
 }
-// let fire = false
-// let fireKey
 let nextFire
 const FIRERATE = 300
+let startGameDate
+
+function getTimeRemaining () {
+  let t = Date.parse(new Date()) - startGameDate
+  let seconds = Math.floor((t / 1000) % 60)
+  return 25 - seconds
+}
+
+/*
+function endGame() {
+  let t = getTimeRemaining()
+  if (t < 0) {
+    //do something
+  }
+  else if (t < 10) {
+    //start dead spiral
+  }
+}
+*/
 
 function preload () {
   // asset loading stuff goes here
@@ -45,7 +62,8 @@ function preload () {
 function createWizard (tx, ty) {
   const wizard = wizardGroup.create(tx * 100, ty * 100, 'wizard')
   wizard.anchor.x = 0.5
-  wizard.body.setSize(80, 80, 0, 0)
+  wizard.anchor.y = 0.3
+  wizard.body.setSize(60, 60, 20, 0)
   wizard.body.bounce.setTo(0.8, 0.8)
   wizard.body.collideWorldBounds = true
   wizards.push(wizard)
@@ -130,45 +148,45 @@ function create () {
   bulletGroup.enableBody = true
   bulletGroup.physicsBodyType = Phaser.Physics.ARCADE
 
-  // cursors = game.input.keyboard.createCursorKeys()
-  // keys = {
-  //   up: game.input.keyboard.addKey(Phaser.KeyCode.W),
-  //   left: game.input.keyboard.addKey(Phaser.KeyCode.A),
-  //   down: game.input.keyboard.addKey(Phaser.KeyCode.S),
-  //   right: game.input.keyboard.addKey(Phaser.KeyCode.D)
-  // }
+  cursors = game.input.keyboard.createCursorKeys()
+  keys = {
+    up: game.input.keyboard.addKey(Phaser.KeyCode.W),
+    left: game.input.keyboard.addKey(Phaser.KeyCode.A),
+    down: game.input.keyboard.addKey(Phaser.KeyCode.S),
+    right: game.input.keyboard.addKey(Phaser.KeyCode.D)
+  }
   game.input.gamepad.start()
 
   nextFire = game.time.now + FIRERATE
-
-  // fireKey = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR)
-  // cursors.isUp.add(function () {
-    // fire = true
-  // })
 }
 
 const SPEED = 300
 const FSPEED = 400
 
+const timer = document.querySelector('#countdown > span')
 function update () {
   game.physics.arcade.collide(wizardGroup)
   game.physics.arcade.collide(wizardGroup, bulletGroup, bulletCollided)
   game.physics.arcade.collide(wizardGroup, wallGroup)
   game.physics.arcade.collide(wallGroup, bulletGroup, bulletCollidedWall)
 
-  // const wizard = wizards[0]
-  // wizard.body.velocity.x = SPEED * Number(keys.right.isDown) - SPEED * Number(keys.left.isDown)
-  // wizard.body.velocity.y = SPEED * Number(keys.down.isDown) - SPEED * Number(keys.up.isDown)
-  //
-  // if (game.time.now > nextFire) {
-  //   let fx = Number(cursors.right.isDown) - Number(cursors.left.isDown)
-  //   let fy = Number(cursors.down.isDown) - Number(cursors.up.isDown)
-  //   if (fx !== 0 || fy !== 0) {
-  //     fireBullet(wizard, Number(fx), Number(fy))
-  //     nextFire = game.time.now + FIRERATE
-  //   }
-  // }
-  updateAllWizards()
+  window.meinWizard = wizards[0]
+  if (playerWizards.length === 0) {
+    const wizard = wizards[0]
+    wizard.body.velocity.x = SPEED * Number(keys.right.isDown) - SPEED * Number(keys.left.isDown)
+    wizard.body.velocity.y = SPEED * Number(keys.down.isDown) - SPEED * Number(keys.up.isDown)
+
+    if (game.time.now > nextFire) {
+      let fx = Number(cursors.right.isDown) - Number(cursors.left.isDown)
+      let fy = Number(cursors.down.isDown) - Number(cursors.up.isDown)
+      if (fx !== 0 || fy !== 0) {
+        fireBullet(wizard, Number(fx), Number(fy))
+        nextFire = game.time.now + FIRERATE
+      }
+    }
+  } else updateAllWizards()
+  let t = getTimeRemaining()
+  timer.innerHTML = t + 's'
 }
 
 function updateAllWizards () {
@@ -177,6 +195,7 @@ function updateAllWizards () {
     let input = playerWizards[i].input
 
     moveWizard(wizard, input[0])
+    wizard.rotation += 0.05
 
     if (game.time.now > nextFire && (input[1][0] || input[1][1])) {
       fireBullet(wizard, input[1][0], input[1][1] * -1)
@@ -191,15 +210,23 @@ function moveWizard (wizard, vec) {
 }
 
 function fireBullet (wizard, x, y) {
-  let bposx = wizard.x + 40 * x + (x < 0 ? -30 : 0)
-  let bposy = wizard.y + 40 + (y < 0 ? 60 : 50) * y
-  const bullet = bulletGroup.create(bposx, bposy, 'bullet5')
+  let house = wizard.house
+  const bullet = bulletGroup.create(
+    wizard.x + 40 * x + (x < 0 ? -30 : 0), wizard.y + 10 + (y < 0 ? 60 : 50) * y,
+    'bullet5'
+  )
+  if (house === 0) bullet.tint = 0xcd2129
+  if (house === 1) bullet.tint = 0xe7c427
+  if (house === 2) bullet.tint = 0x0b9ed1
+  if (house === 3) bullet.tint = 0x21a047
+
   // bullet.anchor.x = 0.5
-  bullet.body.setSize(10, 10, 0, 0)
+  bullet.body.setSize(25, 25, 0, 0)
   bullet.body.collideWorldBounds = true
   bullet.body.velocity.y = FSPEED * y
   bullet.body.velocity.x = FSPEED * x
   bullets.push(bullet)
+
   let angleRot = 2 * Math.PI / 8
   console.log(wizard.rotation)
   if (x === 0 && y === 0) wizard.rotation = 0
@@ -211,6 +238,7 @@ function fireBullet (wizard, x, y) {
   if (x === 1 && y === 0) wizard.rotation = angleRot * 6
   if (x === 1 && y === -1) wizard.rotation = angleRot * 7
   if (x === 1 && y === 1) wizard.rotation = angleRot * 8
+
 }
 
 function bulletCollided (wizard, bullet) {
@@ -226,7 +254,7 @@ function bulletCollidedWall (wall, bullet) {
 
 function render () {
   wizards.forEach(wizard => game.debug.body(wizard))
-  bullets.forEach(bullet => game.debug.body(bullet))
+  //bullets.forEach(bullet => game.debug.body(bullet))
   walls.forEach(wall => game.debug.body(wall))
 }
 
@@ -281,7 +309,9 @@ window.startGame = function () {
       let player = house[Math.floor(Math.random() * house.length)]
       console.log('Selected ' + player.id)
       playerWizards.push(player)
-      console.log(wizards[playerWizards.length - 1].loadTexture(houseNumSprite[player.house], 0))
+      wizards[playerWizards.length - 1].loadTexture(houseNumSprite[player.house], 0)
+      wizards[playerWizards.length - 1].house = houseId
     }
   }
+  startGameDate = Date.parse(new Date())
 }
