@@ -254,18 +254,18 @@ function updateAllWizards () {
     let wizard = wizards[i]
     if (wizard.alive) {
       let input = playerWizards[i].input
-
       moveWizard(wizard, input[0])
 
-    if (game.time.now > nextFire && (input[1][0] || input[1][1]) && wizard.mana > 0) {
-      wizard.mana -= shootMana
-      if (wizard.house === '0') rmana.style.width = wizard.mana + '%'
-      if (wizard.house === '1') ymana.style.width = wizard.mana + '%'
-      if (wizard.house === '2') bmana.style.width = wizard.mana + '%'
-      if (wizard.house === '3') gmana.style.width = wizard.mana + '%'
+      if (game.time.now > nextFire && (input[1][0] || input[1][1]) && wizard.mana > 0) {
+        wizard.mana -= shootMana
+        if (wizard.house === '0') rmana.style.width = wizard.mana + '%'
+        if (wizard.house === '1') ymana.style.width = wizard.mana + '%'
+        if (wizard.house === '2') bmana.style.width = wizard.mana + '%'
+        if (wizard.house === '3') gmana.style.width = wizard.mana + '%'
 
-      fireBullet(wizard, input[1][0], input[1][1] * -1)
-      nextFire = game.time.now + FIRERATE
+        fireBullet(wizard, input[1][0], input[1][1] * -1)
+        nextFire = game.time.now + FIRERATE
+      }
     }
   }
 }
