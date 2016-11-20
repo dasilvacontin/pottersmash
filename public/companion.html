@@ -2,10 +2,15 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0">
   <style>
+  @font-face {
+    font-family: Potter;
+    src: url(/fonts/harrypotter.ttf);
+  }
+
   body {
     margin: 0;
     max-height: 100%;
-    font-family: serif;
+    font-family: Potter;
   }
 
   .hide {
@@ -43,6 +48,24 @@
       display: block;
     }
   }
+
+  #waiting {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background: black;
+    display: table-cell;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #waiting > p { font-size: 60px; color: white }
+
   </style>
 </head>
 <body>
@@ -65,6 +88,11 @@
         <img src="/images/slytherin_scaled.png" alt="Slytherin" />
       </span>
     </div>
+
+    <div id="waiting">
+      <p>Look at the big screen!</p>
+    </div>
+
     <canvas class="hide" id="player-controller"></canvas>
   </div>
   <script src="companion.js"></script>

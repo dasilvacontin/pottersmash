@@ -345,16 +345,20 @@ socket.on('connect', () => {
 })
 
 window.startGame = function () {
+  const promoted = []
+
   for (let houseId in wizardsByHouse) {
     let house = wizardsByHouse[houseId]
     if (house.length > 0) {
       let player = house[Math.floor(Math.random() * house.length)]
       console.log('Selected ' + player.id)
+      promoted.push(player.id)
       playerWizards.push(player)
       wizards[playerWizards.length - 1].loadTexture(houseNumSprite[player.house], 0)
       wizards[playerWizards.length - 1].house = houseId
     }
   }
+  socket.emit('promote-players', promoted)
   startGameDate = Date.parse(new Date())
   setTimeout(endGame, 20000)
 }

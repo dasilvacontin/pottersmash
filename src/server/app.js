@@ -12,12 +12,17 @@ function onHostGame () {
   if (host == null) {
     host = socket
     console.log(`${socket.client.id} began hosting the game`)
-  } else console.log('yolo')
+    host.on('promote-players', (players) => {
+      host.broadcast.emit('promote-players', players)
+    })
+  } else {
+    console.log('yolo: someone tried to host a game while it was already being hosted by someone')
+  }
 }
 
 function onPlayerJoin (house) {
   const socket = this
-  if (!host) return console.log('yolo2')
+  if (!host) return console.log('yolo2: player tried to join when no one was hosting')
   host.emit('player-join', socket.client.id, house)
 }
 
