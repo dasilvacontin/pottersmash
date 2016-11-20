@@ -191,17 +191,26 @@ function moveWizard (wizard, vec) {
 }
 
 function fireBullet (wizard, x, y) {
-  const bullet = bulletGroup.create(
-    wizard.x + 40 * x + (x < 0 ? -30 : 0), wizard.y + 40 + (y < 0 ? 60 : 50) * y,
-    'bullet5'
-  )
+  let bposx = wizard.x + 40 * x + (x < 0 ? -30 : 0)
+  let bposy = wizard.y + 40 + (y < 0 ? 60 : 50) * y
+  const bullet = bulletGroup.create(bposx, bposy, 'bullet5')
   // bullet.anchor.x = 0.5
   bullet.body.setSize(10, 10, 0, 0)
   bullet.body.collideWorldBounds = true
   bullet.body.velocity.y = FSPEED * y
   bullet.body.velocity.x = FSPEED * x
   bullets.push(bullet)
-  wizard.angle += 10
+  let angleRot = 2 * Math.PI / 8
+  console.log(wizard.rotation)
+  if (x === 0 && y === 0) wizard.rotation = 0
+  if (x === 0 && y === -1) wizard.rotation = angleRot
+  if (x === 0 && y === 1) wizard.rotation = angleRot * 2
+  if (x === -1 && y === 0) wizard.rotation = angleRot * 3
+  if (x === -1 && y === 1) wizard.rotation = angleRot * 4
+  if (x === -1 && y === -1) wizard.rotation = angleRot * 5
+  if (x === 1 && y === 0) wizard.rotation = angleRot * 6
+  if (x === 1 && y === -1) wizard.rotation = angleRot * 7
+  if (x === 1 && y === 1) wizard.rotation = angleRot * 8
 }
 
 function bulletCollided (wizard, bullet) {
@@ -272,7 +281,7 @@ window.startGame = function () {
       let player = house[Math.floor(Math.random() * house.length)]
       console.log('Selected ' + player.id)
       playerWizards.push(player)
-      wizards[playerWizards.length - 1].loadTexture(houseNumSprite[houseId], 0)
+      console.log(wizards[playerWizards.length - 1].loadTexture(houseNumSprite[player.house], 0))
     }
   }
 }
