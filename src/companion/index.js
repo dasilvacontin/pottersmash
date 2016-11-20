@@ -5,8 +5,16 @@ const { Joystick } = require('./joystick.js')
 const io = require('socket.io-client')
 const socket = io()
 
+const house = Number(prompt('House? 0-3'))
+const colors = [
+  '#cd2129',
+  '#e7c427',
+  '#0b9ed1',
+  '#21a047'
+]
+
 socket.on('connect', () => {
-  socket.emit('player-join', prompt('House? 0-3'))
+  socket.emit('player-join', house)
 })
 
 var canvas = document.getElementById('player-controller')
@@ -19,7 +27,11 @@ const elements = [
 
 function updateJoysticks () {
   var ctx = canvas.getContext('2d')
+  ctx.fillStyle = colors[house]
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+
   var radius = canvas.height * 0.30
+  ctx.strokeStyle = 'white'
 
   let centerx, centery
   centerx = canvas.width / 4
