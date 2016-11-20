@@ -188,15 +188,13 @@ function update () {
     }
   } else updateAllWizards()
 
-<<<<<<< HEAD
   if (!finished) {
     let t = getTimeRemaining()
+    if (t <= 5 && !sequence) {
+      sequence = true
+      dropSequence(1)
+    }
     timer.innerHTML = t + 's'
-  }
-=======
-  if (getTimeRemaining() <= 5 && !sequence) {
-    sequence = true
-    dropSequence(1)
   }
 
   let t = getTimeRemaining()
