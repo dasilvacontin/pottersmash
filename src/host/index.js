@@ -2,6 +2,7 @@
 window.PIXI = require('phaser/build/custom/pixi')
 window.p2 = require('phaser/build/custom/p2')
 const Phaser = window.Phaser = require('phaser/build/custom/phaser-split')
+const map = require('./mapGenerator.js').getMap(15, 9)
 
 const game = new Phaser.Game(
   window.innerWidth,
@@ -18,24 +19,20 @@ let players, bullets, walls
 let nextFire
 const FIRERATE = 300
 
-let map = [
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-[1, 1, 0, 0, 0, 0, 0, 1, 0, 1],
-[1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-[1, 0, 1, 0, 1, 0, 0, 0, 0, 1],
-[1, 1, 0, 0, 0, 0, 0, 1, 0, 1],
-[1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-]
-
 function preload () {
   // asset loading stuff goes here
   game.load.image('wizard', 'images/wizardSmall.png')
   game.load.image('bullet5', 'images/bullet.png')
   game.load.image('wall', 'images/wall.jpg')
+}
+
+function createPlayer (tx, ty) {
+  const player = playerGroup.create(tx * 100, ty * 100, 'wizard')
+  player.anchor.x = 0.5
+  player.body.setSize(80, 80, 0, 0)
+  player.body.bounce.setTo(0.8, 0.8)
+  player.body.collideWorldBounds = true
+  players.push(player)
 }
 
 function create () {
@@ -68,17 +65,48 @@ function create () {
   playerGroup.physicsBodyType = Phaser.Physics.ARCADE
 
   players = []
-  for (let i = 0; i < 4; ++i) {
-    const player = playerGroup.create(
-      Math.floor(Math.random() * window.innerWidth),
-      Math.floor(Math.random() * window.innerHeight),
-      'wizard'
-    )
-    player.anchor.x = 0.5
-    player.body.setSize(80, 80, 0, 0)
-    player.body.bounce.setTo(0.8, 0.8)
-    player.body.collideWorldBounds = true
-    players.push(player)
+
+  let tx, ty
+
+  for (tx = 0; tx < map.length; tx++) {
+    for (ty = 0; ty < map[0].length; ty++) {
+      if (map[tx][ty] === 0) break
+    }
+    if (map[tx][ty] === 0) {
+      createPlayer(tx, ty)
+      break
+    }
+  }
+
+  for (tx = map.length - 1; tx > 0; tx--) {
+    for (ty = 0; ty < map[0].length; ty++) {
+      console.log(map[tx])
+      if (map[tx][ty] === 0) break
+    }
+    if (map[tx][ty] === 0) {
+      createPlayer(tx, ty)
+      break
+    }
+  }
+
+  for (tx = 0; tx < map.length; tx++) {
+    for (ty = map[0].length - 1; ty > 0; ty--) {
+      if (map[tx][ty] === 0) break
+    }
+    if (map[tx][ty] === 0) {
+      createPlayer(tx, ty)
+      break
+    }
+  }
+
+  for (tx = map.length - 1; tx > 0; tx--) {
+    for (ty = map[0].length - 1; ty > 0; ty--) {
+      if (map[tx][ty] === 0) break
+    }
+    if (map[tx][ty] === 0) {
+      createPlayer(tx, ty)
+      break
+    }
   }
 
   bullets = []
