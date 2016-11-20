@@ -34,6 +34,12 @@ let startGameDate
 let finished = false
 let sequence = false
 
+const timer = document.querySelector('#countdown > span')
+const gmana = document.querySelector('#slyth')
+const bmana = document.querySelector('#raven')
+const rmana = document.querySelector('#grif')
+const ymana = document.querySelector('#huff')
+
 function getTimeRemaining () {
   let t = Date.parse(new Date()) - startGameDate
   let seconds = Math.floor((t / 1000) % 60)
@@ -52,6 +58,10 @@ function endGame () {
     playerWizards = []
     startGameDate = undefined
     finished = false
+    rmana.style.width = '100%'
+    ymana.style.width = '100%'
+    bmana.style.width = '100%'
+    gmana.style.width = '100%'
     create()
   }, 5000)
 }
@@ -179,12 +189,6 @@ function create () {
 
 const SPEED = 300
 const FSPEED = 400
-
-const timer = document.querySelector('#countdown > span')
-const gmana = document.querySelector('#slyth')
-const bmana = document.querySelector('#raven')
-const rmana = document.querySelector('#grif')
-const ymana = document.querySelector('#huff')
 
 function update () {
   game.physics.arcade.collide(wizardGroup)
