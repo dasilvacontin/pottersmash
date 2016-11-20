@@ -196,10 +196,6 @@ function update () {
     }
     timer.innerHTML = t + 's'
   }
-
-  let t = getTimeRemaining()
-  timer.innerHTML = t + 's'
-  // console.log(t)
 }
 
 function dropSequence (i) {
