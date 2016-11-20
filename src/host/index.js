@@ -55,7 +55,7 @@ function preload () {
   game.load.image('wizgreen', 'images/girlgreen.png')
   game.load.image('wizyellow', 'images/girlyellow.png')
   game.load.image('wizblue', 'images/girlblue.png')
-  game.load.image('bullet5', 'images/bullet.png')
+  game.load.image('bullet5', 'images/bolanieve.png')
   game.load.image('wall', 'images/wall.jpg')
 }
 
@@ -215,10 +215,13 @@ function fireBullet (wizard, x, y) {
     wizard.x + 40 * x + (x < 0 ? -30 : 0), wizard.y + 10 + (y < 0 ? 60 : 50) * y,
     'bullet5'
   )
-  if (house === 0) bullet.tint = 0xcd2129
-  if (house === 1) bullet.tint = 0xe7c427
-  if (house === 2) bullet.tint = 0x0b9ed1
-  if (house === 3) bullet.tint = 0x21a047
+  debugger
+  if (house === '0') bullet.tint = 0xcd2129
+  else if (house === '1') bullet.tint = 0xe7c427
+  else if (house === '2') bullet.tint = 0x0b9ed1
+  else if (house === '3') bullet.tint = 0x21a047
+
+  console.log(house)
 
   // bullet.anchor.x = 0.5
   bullet.body.setSize(25, 25, 0, 0)
@@ -238,7 +241,6 @@ function fireBullet (wizard, x, y) {
   if (x === 1 && y === 0) wizard.rotation = angleRot * 6
   if (x === 1 && y === -1) wizard.rotation = angleRot * 7
   if (x === 1 && y === 1) wizard.rotation = angleRot * 8
-
 }
 
 function bulletCollided (wizard, bullet) {
@@ -254,7 +256,7 @@ function bulletCollidedWall (wall, bullet) {
 
 function render () {
   wizards.forEach(wizard => game.debug.body(wizard))
-  //bullets.forEach(bullet => game.debug.body(bullet))
+  // bullets.forEach(bullet => game.debug.body(bullet))
   walls.forEach(wall => game.debug.body(wall))
 }
 
