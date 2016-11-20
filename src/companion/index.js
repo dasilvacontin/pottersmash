@@ -1,4 +1,4 @@
-/* globals screen, Element, Image */
+/* globals screen, Element, Image, alert */
 // companion main file
 
 const { Joystick } = require('./joystick.js')
@@ -23,6 +23,10 @@ var selector = document.getElementById('house-selector')
 for (let i = 1; i < selector.children.length; ++i) {
   selector.children[i].onclick = selectHouse.bind(this, i - 1)
 }
+
+const waitingView = document.getElementById('waiting')
+waitingView.style.display = 'none'
+
 var canvas = document.getElementById('player-controller')
 console.log('Im the companion app!')
 
@@ -47,6 +51,19 @@ function selectHouse (id) {
     window.addEventListener('touchmove', touchMove)
     window.addEventListener('touchend', touchEnd)
     resized()
+
+    waitingView.style.display = 'block'
+    socket.on('promote-players', (players) => {
+      waitingView.style.display = 'none'
+
+      if (players.indexOf(socket.id) !== -1) {
+        // is player
+        alert('you are player')
+      } else {
+        // is spectator
+        alert('you are spectator')
+      }
+    })
   })
 }
 /* eslint-enable no-unused-vars */
