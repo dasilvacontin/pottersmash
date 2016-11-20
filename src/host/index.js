@@ -30,6 +30,23 @@ let houseNumSprite = {
 // let fireKey
 let nextFire
 const FIRERATE = 300
+let startGameDate
+
+function getTimeRemaining(){
+  let t = Date.parse(new Date()) - startGameDate
+  let seconds = Math.floor( (t/1000) % 60 )
+  return 25 - seconds 
+}
+
+function endGame() {
+  let t = getTimeRemaining()
+  if (t < 0) {
+    //do something
+  }
+  else if (t < 10) {
+    //start dead spiral
+  }
+}
 
 function preload () {
   // asset loading stuff goes here
@@ -275,4 +292,10 @@ window.startGame = function () {
       wizards[playerWizards.length - 1].loadTexture(houseNumSprite[houseId], 0)
     }
   }
+  startGameDate = Date.parse(new Date())
 }
+
+
+
+
+
