@@ -137,8 +137,8 @@ function create () {
   // })
 }
 
-const SPEED = 200
-const FSPEED = 300
+const SPEED = 300
+const FSPEED = 400
 
 function update () {
   game.physics.arcade.collide(wizardGroup)
