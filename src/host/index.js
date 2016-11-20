@@ -28,6 +28,10 @@ const FIRERATE = 300
 function preload () {
   // asset loading stuff goes here
   game.load.image('wizard', 'images/wizardSmall.png')
+  game.load.image('wizred', 'images/girlred.png')
+  game.load.image('wizgreen', 'images/girlgreen.png')
+  game.load.image('wizyellow', 'images/girlyellow.png')
+  game.load.image('wizblue', 'images/girlblue.png')
   game.load.image('bullet5', 'images/bullet.png')
   game.load.image('wall', 'images/wall.jpg')
 }
