@@ -91,6 +91,7 @@ function createWizard (tx, ty) {
 }
 
 function create () {
+  document.querySelector('#round').style.display = 'none'
   game.stage.backgroundColor = '#9f6015'
 
   sequence = false
