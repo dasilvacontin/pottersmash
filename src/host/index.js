@@ -19,6 +19,7 @@ let wizardGroup, bulletGroup, wallGroup
 // let cursors, keys
 let wizards, bullets, walls
 let playerWizards = []
+let wizardsByHouse = [[], [], [], []]
 // let fire = false
 // let fireKey
 let nextFire
@@ -234,6 +235,7 @@ function onPlayerJoin (socketId, house) {
   console.log('player-join', socketId, house)
   const player = new Player(socketId, house)
   players[player.id] = player
+  wizardsByHouse[house].push(player)
   console.log(players)
 }
 
@@ -253,7 +255,12 @@ socket.on('connect', () => {
 })
 
 window.startGame = function () {
-  for (let playerId in players) {
-    playerWizards.push(players[playerId])
+  for (let houseId in wizardsByHouse) {
+    let house = wizardsByHouse[houseId]
+    if (house.length > 0) {
+      let player = house[Math.floor(Math.random() * house.length)]
+      console.log('Selected ' + player.id)
+      playerWizards.push(player)
+    }
   }
 }
