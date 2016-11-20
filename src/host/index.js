@@ -28,6 +28,8 @@ let houseNumSprite = {
 }
 let nextFire
 const FIRERATE = 300
+const MAXMANA = 100
+let shootMana = 25
 let startGameDate
 
 function getTimeRemaining () {
@@ -66,6 +68,7 @@ function createWizard (tx, ty) {
   wizard.body.setSize(60, 60, 20, 0)
   wizard.body.bounce.setTo(0.8, 0.8)
   wizard.body.collideWorldBounds = true
+  wizard.mana = MAXMANA
   wizards.push(wizard)
 }
 
@@ -164,6 +167,11 @@ const SPEED = 300
 const FSPEED = 400
 
 const timer = document.querySelector('#countdown > span')
+const gmana = document.querySelector('#slyth')
+const bmana = document.querySelector('#raven')
+const rmana = document.querySelector('#grif')
+const ymana = document.querySelector('#huff')
+
 function update () {
   game.physics.arcade.collide(wizardGroup)
   game.physics.arcade.collide(wizardGroup, bulletGroup, bulletCollided)
@@ -179,7 +187,12 @@ function update () {
     if (game.time.now > nextFire) {
       let fx = Number(cursors.right.isDown) - Number(cursors.left.isDown)
       let fy = Number(cursors.down.isDown) - Number(cursors.up.isDown)
-      if (fx !== 0 || fy !== 0) {
+      if ((fx !== 0 || fy !== 0) && wizard.mana > 0) {
+        wizard.mana -= shootMana
+        if (wizard.house === '0') rmana.style.width = wizard.mana + '%'
+        if (wizard.house === '1') ymana.style.width = wizard.mana + '%'
+        if (wizard.house === '2') bmana.style.width = wizard.mana + '%'
+        if (wizard.house === '3') gmana.style.width = wizard.mana + '%'
         fireBullet(wizard, Number(fx), Number(fy))
         nextFire = game.time.now + FIRERATE
       }
@@ -196,7 +209,13 @@ function updateAllWizards () {
 
     moveWizard(wizard, input[0])
 
-    if (game.time.now > nextFire && (input[1][0] || input[1][1])) {
+    if (game.time.now > nextFire && (input[1][0] || input[1][1]) && wizard.mana > 0) {
+      wizard.mana -= shootMana
+      if (wizard.house === '0') rmana.style.width = wizard.mana + '%'
+      if (wizard.house === '1') ymana.style.width = wizard.mana + '%'
+      if (wizard.house === '2') bmana.style.width = wizard.mana + '%'
+      if (wizard.house === '3') gmana.style.width = wizard.mana + '%'
+
       fireBullet(wizard, input[1][0], input[1][1] * -1)
       nextFire = game.time.now + FIRERATE
     }
@@ -214,6 +233,7 @@ function fireBullet (wizard, x, y) {
     wizard.x + 40 * x + (x < 0 ? -30 : 0), wizard.y + 10 + (y < 0 ? 60 : 50) * y,
     'bullet5'
   )
+
   debugger
   if (house === '0') bullet.tint = 0xcd2129
   else if (house === '1') bullet.tint = 0xe7c427
