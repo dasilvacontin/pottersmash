@@ -195,7 +195,6 @@ function updateAllWizards () {
     let input = playerWizards[i].input
 
     moveWizard(wizard, input[0])
-    wizard.rotation += 0.05
 
     if (game.time.now > nextFire && (input[1][0] || input[1][1])) {
       fireBullet(wizard, input[1][0], input[1][1] * -1)
@@ -228,17 +227,16 @@ function fireBullet (wizard, x, y) {
   bullets.push(bullet)
 
   let angleRot = 2 * Math.PI / 8
-  console.log(wizard.rotation)
-  if (x === 0 && y === 0) wizard.rotation = 0
-  if (x === 0 && y === -1) wizard.rotation = angleRot
-  if (x === 0 && y === 1) wizard.rotation = angleRot * 2
-  if (x === -1 && y === 0) wizard.rotation = angleRot * 3
-  if (x === -1 && y === 1) wizard.rotation = angleRot * 4
-  if (x === -1 && y === -1) wizard.rotation = angleRot * 5
-  if (x === 1 && y === 0) wizard.rotation = angleRot * 6
-  if (x === 1 && y === -1) wizard.rotation = angleRot * 7
-  if (x === 1 && y === 1) wizard.rotation = angleRot * 8
 
+  if (x === 0 && y === 0) wizard.rotation = angleRot * 4
+  if (x === 0 && y === 1) wizard.rotation = 0
+  if (x === 1 && y === 1) wizard.rotation = angleRot * 7
+  if (x === 1 && y === 0) wizard.rotation = angleRot * 6
+  if (x === 1 && y === -1) wizard.rotation = angleRot * 5
+  if (x === 0 && y === -1) wizard.rotation = angleRot * 4
+  if (x === -1 && y === -1) wizard.rotation = angleRot * 3
+  if (x === -1 && y === 0) wizard.rotation = angleRot * 2
+  if (x === -1 && y === 1) wizard.rotation = angleRot
 }
 
 function bulletCollided (wizard, bullet) {
@@ -254,7 +252,7 @@ function bulletCollidedWall (wall, bullet) {
 
 function render () {
   wizards.forEach(wizard => game.debug.body(wizard))
-  //bullets.forEach(bullet => game.debug.body(bullet))
+  // bullets.forEach(bullet => game.debug.body(bullet))
   walls.forEach(wall => game.debug.body(wall))
 }
 
