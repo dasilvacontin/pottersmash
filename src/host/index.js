@@ -209,9 +209,10 @@ class Player {
 }
 
 function onPlayerJoin (socketId, house) {
-  console.log('select-house', socketId, house)
+  console.log('player-join', socketId, house)
   const player = new Player(socketId, house)
   players[player.id] = player
+  console.log(players)
 }
 
 function onInputUpdate (socketId, inputData) {

@@ -1,11 +1,13 @@
-/* globals screen Element */
+/* globals screen, Element, prompt */
 // companion main file
 
 const { Joystick } = require('./joystick.js')
 const io = require('socket.io-client')
 const socket = io()
 
-socket.on('connect', () => console.log('yolo'))
+socket.on('connect', () => {
+  socket.emit('player-join', prompt('House? 0-3'))
+})
 
 var canvas = document.getElementById('player-controller')
 console.log('Im the companion app!')
