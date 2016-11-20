@@ -1,11 +1,10 @@
-/* globals screen, Element, prompt, Image */
+/* globals screen, Element, Image */
 // companion main file
 
 const { Joystick } = require('./joystick.js')
 const io = require('socket.io-client')
-const socket = io()
-
-const house = Number(prompt('House? 0-3'))
+let socket
+let house
 const colors = [
   '#cd2129',
   '#e7c427',
@@ -19,12 +18,11 @@ const houseNames = [
   'slytherin'
 ]
 const shield = new Image()
-shield.src = `/images/${houseNames[house]}_scaled.png`
 
-socket.on('connect', () => {
-  socket.emit('player-join', house)
-})
-
+var selector = document.getElementById('house-selector')
+for (let i = 1; i < selector.children.length; ++i) {
+  selector.children[i].onclick = selectHouse.bind(this, i - 1)
+}
 var canvas = document.getElementById('player-controller')
 console.log('Im the companion app!')
 
@@ -32,6 +30,26 @@ const elements = [
   new Joystick(0, 0),
   new Joystick(0, 0)
 ]
+
+/* eslint-disable no-unused-vars */
+function selectHouse (id) {
+  requestFullscreen(document.documentElement)
+  house = id
+  socket = io()
+  socket.on('connect', () => {
+    socket.emit('player-join', house)
+    house = id
+    shield.src = `/images/${houseNames[house]}_scaled.png`
+    selector.style.display = 'none'
+    canvas.style.display = 'block'
+    window.onresize = resized
+    window.addEventListener('touchstart', touchStart)
+    window.addEventListener('touchmove', touchMove)
+    window.addEventListener('touchend', touchEnd)
+    resized()
+  })
+}
+/* eslint-enable no-unused-vars */
 
 function updateJoysticks () {
   var ctx = canvas.getContext('2d')
@@ -95,14 +113,7 @@ function requestFullscreen (element) {
   }
 }
 
-window.onresize = resized
 // requestFullscreen(window.document.documentElement)
-
-resized()
-
-window.addEventListener('touchstart', touchStart)
-window.addEventListener('touchmove', touchMove)
-window.addEventListener('touchend', touchEnd)
 
 const touchToElement = {}
 

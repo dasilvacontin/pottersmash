@@ -1,12 +1,36 @@
 <!DOCTYPE html>
 <head>
   <style>
+    @font-face {
+      font-family: Potter;
+      src: url(/fonts/harrypotter.ttf);
+    }
+
     body {
       margin: 0;
+    }
+
+    #countdown {
+      position: absolute;
+      top: 0;
+      width: 100%;
+
+      font-family: Potter;
+      font-size: 100px;
+      text-align: center;
+      color: white;
+    }
+
+    #countdown > span {
+      display: inline-block;
+      padding: 3px 15px;
+      box-sizing: content-box;
+      background: rgba(0, 0, 0, 0.7);
     }
   </style>
 </head>
 <body>
+  <div id="countdown"><span class="">18s</span></div>
   <script src="host.js"></script>
 </body>
 </html>

@@ -163,6 +163,7 @@ function create () {
 const SPEED = 300
 const FSPEED = 400
 
+const timer = document.querySelector('#countdown > span')
 function update () {
   game.physics.arcade.collide(wizardGroup)
   game.physics.arcade.collide(wizardGroup, bulletGroup, bulletCollided)
@@ -184,8 +185,8 @@ function update () {
       }
     }
   } else updateAllWizards()
-  // let t = getTimeRemaining()
-  // console.log(t)
+  let t = getTimeRemaining()
+  timer.innerHTML = t + 's'
 }
 
 function updateAllWizards () {
@@ -225,7 +226,7 @@ function fireBullet (wizard, x, y) {
   bullet.body.velocity.y = FSPEED * y
   bullet.body.velocity.x = FSPEED * x
   bullets.push(bullet)
-  wizard.angle += 10
+  wizard.rotation += 10
 }
 
 function bulletCollided (wizard, bullet) {
@@ -302,4 +303,3 @@ window.startGame = function () {
   }
   startGameDate = Date.parse(new Date())
 }
-
