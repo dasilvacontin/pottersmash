@@ -4,12 +4,29 @@ const app = express()
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
 
+// socket that hosts the game
+let host = null
+
+function onHostGame () {
+  const socket = this
+  if (host == null) {
+    host = socket
+    console.log(`${socket.client.id} began hosting the game`)
+  } else console.log('yolo')
+}
+
+function onInputUpdate (inputData) {
+  const socket = this
+  console.log(`${socket.client.id} send input-data`, inputData)
+  host.emit('input-update', socket.client.id, inputData)
+}
+
 // socket.io stuff
 io.on('connection', function (socket) {
   console.log('a user connected')
-  socket.on('input-update', function (inputData) {
-    console.log(inputData)
-  })
+
+  socket.on('host-game', onHostGame)
+  socket.on('input-update', onInputUpdate)
 })
 
 // serve static assets
