@@ -33,6 +33,12 @@ function onInputUpdate (inputData) {
   host.emit('input-update', socket.client.id, inputData)
 }
 
+function onBuff (buff) {
+  const socket = this
+  if (!host) return
+  host.emit('buff', socket.client.id, buff)
+}
+
 // socket.io stuff
 io.on('connection', function (socket) {
   console.log('a user connected')
@@ -40,6 +46,7 @@ io.on('connection', function (socket) {
   socket.on('host-game', onHostGame)
   socket.on('player-join', onPlayerJoin)
   socket.on('input-update', onInputUpdate)
+  socket.on('buff', onBuff)
 })
 
 // serve static assets

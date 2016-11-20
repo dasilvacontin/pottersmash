@@ -367,10 +367,13 @@ function onPlayerJoin (socketId, house) {
 }
 
 function onInputUpdate (socketId, inputData) {
-  // console.log('input-data', socketId, inputData)
   const player = players[socketId]
   if (!player) return
   player.updateInput(inputData)
+}
+
+function onBuff (socketId, buff) {
+  console.log('buff!', socketId, buff)
 }
 
 socket.on('connect', () => {
@@ -379,6 +382,7 @@ socket.on('connect', () => {
 
   socket.on('player-join', onPlayerJoin)
   socket.on('input-update', onInputUpdate)
+  socket.on('buff', onBuff)
 })
 
 window.startGame = function () {
