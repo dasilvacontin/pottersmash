@@ -224,7 +224,8 @@ for (var item of buttons) {
   item.onclick = tap
 }
 
-function tap () {
+function tap (e) {
   socket.emit('buff', this.getAttribute('data-buff'))
+  e.preventDefault()
 }
 /* SUPPORT END */
