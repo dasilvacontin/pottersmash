@@ -30,12 +30,13 @@ let nextFire
 const FIRERATE = 300
 let startGameDate
 
-function getTimeRemaining(){
+function getTimeRemaining () {
   let t = Date.parse(new Date()) - startGameDate
-  let seconds = Math.floor( (t/1000) % 60 )
-  return 25 - seconds 
+  let seconds = Math.floor((t / 1000) % 60)
+  return 25 - seconds
 }
 
+/*
 function endGame() {
   let t = getTimeRemaining()
   if (t < 0) {
@@ -45,6 +46,7 @@ function endGame() {
     //start dead spiral
   }
 }
+*/
 
 function preload () {
   // asset loading stuff goes here
@@ -182,6 +184,8 @@ function update () {
       }
     }
   } else updateAllWizards()
+  let t = getTimeRemaining()
+  //console.log(t)
 }
 
 function updateAllWizards () {
@@ -291,8 +295,4 @@ window.startGame = function () {
   }
   startGameDate = Date.parse(new Date())
 }
-
-
-
-
 
