@@ -16,7 +16,7 @@ let players, bullets, walls
 // let fire = false
 // let fireKey
 let nextFire
-const FIRERATE = 100
+const FIRERATE = 300
 
 let map = [
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -104,7 +104,7 @@ function create () {
 }
 
 const SPEED = 200
-const FSPEED = 200
+const FSPEED = 300
 
 function update () {
   game.physics.arcade.collide(playerGroup)
@@ -120,7 +120,7 @@ function update () {
     let fx = Number(cursors.right.isDown) - Number(cursors.left.isDown)
     let fy = Number(cursors.down.isDown) - Number(cursors.up.isDown)
     if (fx !== 0 || fy !== 0) {
-      fireBullet(player, fx, fy)
+      fireBullet(player, Number(fx), Number(fy))
       nextFire = game.time.now + FIRERATE
     }
   }
@@ -128,7 +128,7 @@ function update () {
 
 function fireBullet (player, x, y) {
   const bullet = bulletGroup.create(
-    player.x + 50 * x, player.y + 50 + (y < 0 ? 60 : 50) * y,
+    player.x + 40 * x + (x < 0 ? -30 : 0), player.y + 40 + (y < 0 ? 60 : 50) * y,
     'bullet5'
   )
   // bullet.anchor.x = 0.5
@@ -140,7 +140,7 @@ function fireBullet (player, x, y) {
 }
 
 function bulletCollided (player, bullet) {
-  playerGroup.remove(player, true)
+  playerGroup.remove(player, false)
   bulletGroup.remove(bullet, true)
   console.log('Bullet collided with ' + player)
 }
