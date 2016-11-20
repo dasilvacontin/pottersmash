@@ -12,6 +12,7 @@ export class Joystick {
 
   assignTouch (touch) {
     this.assignedTouch = touch ? touch.identifier : null
+    if (this.assignedTouch == null) this.data = [0, 0]
   }
 
   hasTouchAssigned () {

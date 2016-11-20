@@ -2,6 +2,11 @@
 // companion main file
 
 const { Joystick } = require('./joystick.js')
+const io = require('socket.io-client')
+const socket = io()
+
+socket.on('connect', () => console.log('yolo'))
+
 var canvas = document.getElementById('player-controller')
 console.log('Im the companion app!')
 
@@ -15,14 +20,14 @@ function updateJoysticks () {
   var radius = canvas.height * 0.30
 
   let centerx, centery
-  centerx = canvas.width - (canvas.width / 4)
+  centerx = canvas.width / 4
   centery = canvas.height / 2
   ctx.beginPath()
   ctx.arc(centerx, centery, radius, 0, 2 * Math.PI)
   ctx.stroke()
   elements[0].updateCenter(centerx, centery)
 
-  centerx = canvas.width / 4
+  centerx = canvas.width - (canvas.width / 4)
   centery = canvas.height / 2
   ctx.beginPath()
   ctx.arc(centerx, centery, radius, 0, 2 * Math.PI)
@@ -116,6 +121,7 @@ function touchMove (e) {
     ctx.lineTo(touch.pageX, touch.pageY)
     ctx.stroke()
   }
+  sendInputUpdate()
   e.preventDefault()
 }
 
@@ -127,5 +133,15 @@ function touchEnd (e) {
     delete touchToElement[touch.identifier]
     element.assignTouch(null)
   }
+  sendInputUpdate()
   e.preventDefault()
+}
+
+let lastData = [null, null]
+function sendInputUpdate () {
+  const currData = elements.map(element => element.data)
+  if (JSON.stringify(currData) !== JSON.stringify(lastData)) {
+    lastData = currData
+    socket.emit('input-update', currData)
+  }
 }
