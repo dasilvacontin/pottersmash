@@ -44,7 +44,16 @@ function endGame () {
   finished = true
   // show screen of round over
 
-  // reset all
+  setTimeout(function () {
+    killWallGroup.removeAll(true)
+    wizardGroup.removeAll(true)
+    bulletGroup.removeAll(true)
+    wallGroup.removeAll(true)
+    playerWizards = []
+    startGameDate = undefined
+    finished = false
+    create()
+  }, 5000)
 }
 
 function preload () {
@@ -72,6 +81,9 @@ function createWizard (tx, ty) {
 
 function create () {
   game.stage.backgroundColor = '#9f6015'
+
+  sequence = false
+  finished = false
 
   game.physics.startSystem(Phaser.Physics.ARCADE)
   game.physics.arcade.gravity.y = 0
@@ -296,8 +308,11 @@ function fireBullet (wizard, x, y) {
 }
 
 function bulletCollided (wizard, bullet) {
-  wizardGroup.remove(wizard, false)
+  if (wizard.player) {
+    wizard.player.time = getTimeRemaining()
+  }
   wizard.alive = false
+  wizardGroup.remove(wizard, false)
   bulletGroup.remove(bullet, true)
   console.log('Bullet collided with ' + wizard)
 }
@@ -309,6 +324,9 @@ function bulletCollidedWall (wall, bullet) {
 
 function wallCollided (wall, wizard) {
   wizard.alive = false
+  if (wizard.player) {
+    wizard.player.time = getTimeRemaining()
+  }
   wizardGroup.remove(wizard, false)
 }
 
@@ -332,6 +350,7 @@ class Player {
     this.id = id
     this.house = house
     this.input = [[0, 0], [0, 0]]
+    this.time = NaN
   }
 
   updateInput (input) {
@@ -374,6 +393,7 @@ window.startGame = function () {
       playerWizards.push(player)
       wizards[playerWizards.length - 1].loadTexture(houseNumSprite[player.house], 0)
       wizards[playerWizards.length - 1].house = houseId
+      wizards[playerWizards.length - 1].player = player
     }
   }
   socket.emit('promote-players', promoted)
