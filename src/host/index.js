@@ -286,7 +286,7 @@ function moveWizard (wizard, vec) {
 function fireBullet (wizard, x, y) {
   let house = wizard.house
   const bullet = bulletGroup.create(
-    wizard.x + 40 * x + (x < 0 ? -30 : 0), wizard.y + 10 + (y < 0 ? 60 : 50) * y,
+    wizard.x - 25 + (60 * x), wizard.y - 25 + (60 * y),
     'bullet5'
   )
 
@@ -339,9 +339,9 @@ function wallCollided (wall, wizard) {
 }
 
 function render () {
-  wizards.forEach(wizard => game.debug.body(wizard))
+  // wizards.forEach(wizard => game.debug.body(wizard))
   // bullets.forEach(bullet => game.debug.body(bullet))
-  walls.forEach(wall => game.debug.body(wall))
+  // walls.forEach(wall => game.debug.body(wall))
 }
 
 function resize () {
