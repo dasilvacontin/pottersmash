@@ -28,6 +28,7 @@ function onPlayerJoin (house) {
 
 function onInputUpdate (inputData) {
   const socket = this
+  if (!host) return
   console.log(`${socket.client.id} send input-data`, inputData)
   host.emit('input-update', socket.client.id, inputData)
 }
