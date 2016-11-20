@@ -28,9 +28,17 @@ let houseNumSprite = {
 }
 let nextFire
 const FIRERATE = 300
+const MAXMANA = 100
+let shootMana = 25
 let startGameDate
 let finished = false
 let sequence = false
+
+const timer = document.querySelector('#countdown > span')
+const gmana = document.querySelector('#slyth')
+const bmana = document.querySelector('#raven')
+const rmana = document.querySelector('#grif')
+const ymana = document.querySelector('#huff')
 
 function getTimeRemaining () {
   let t = Date.parse(new Date()) - startGameDate
@@ -42,7 +50,21 @@ function endGame () {
   console.log('endgame')
   finished = true
   document.querySelector('#round').style.display = 'flex'
-  // reset all
+
+  setTimeout(function () {
+    killWallGroup.removeAll(true)
+    wizardGroup.removeAll(true)
+    bulletGroup.removeAll(true)
+    wallGroup.removeAll(true)
+    playerWizards = []
+    startGameDate = undefined
+    finished = false
+    rmana.style.width = '100%'
+    ymana.style.width = '100%'
+    bmana.style.width = '100%'
+    gmana.style.width = '100%'
+    create()
+  }, 5000)
 }
 
 function preload () {
@@ -63,11 +85,16 @@ function createWizard (tx, ty) {
   wizard.body.setSize(60, 60, 20, 0)
   wizard.body.bounce.setTo(0.8, 0.8)
   wizard.body.collideWorldBounds = true
+  wizard.mana = MAXMANA
+  wizard.alive = true
   wizards.push(wizard)
 }
 
 function create () {
   game.stage.backgroundColor = '#9f6015'
+
+  sequence = false
+  finished = false
 
   game.physics.startSystem(Phaser.Physics.ARCADE)
   game.physics.arcade.gravity.y = 0
@@ -164,7 +191,6 @@ function create () {
 const SPEED = 300
 const FSPEED = 400
 
-const timer = document.querySelector('#countdown > span')
 function update () {
   game.physics.arcade.collide(wizardGroup)
   game.physics.arcade.collide(wizardGroup, bulletGroup, bulletCollided)
@@ -181,7 +207,12 @@ function update () {
     if (game.time.now > nextFire) {
       let fx = Number(cursors.right.isDown) - Number(cursors.left.isDown)
       let fy = Number(cursors.down.isDown) - Number(cursors.up.isDown)
-      if (fx !== 0 || fy !== 0) {
+      if ((fx !== 0 || fy !== 0) && wizard.mana > 0) {
+        wizard.mana -= shootMana
+        if (wizard.house === '0') rmana.style.width = wizard.mana + '%'
+        if (wizard.house === '1') ymana.style.width = wizard.mana + '%'
+        if (wizard.house === '2') bmana.style.width = wizard.mana + '%'
+        if (wizard.house === '3') gmana.style.width = wizard.mana + '%'
         fireBullet(wizard, Number(fx), Number(fy))
         nextFire = game.time.now + FIRERATE
       }
@@ -226,13 +257,20 @@ function drawBlock (x, y) {
 function updateAllWizards () {
   for (let i = 0; i < playerWizards.length; ++i) {
     let wizard = wizards[i]
-    let input = playerWizards[i].input
+    if (wizard.alive) {
+      let input = playerWizards[i].input
+      moveWizard(wizard, input[0])
 
-    moveWizard(wizard, input[0])
+      if (game.time.now > nextFire && (input[1][0] || input[1][1]) && wizard.mana > 0) {
+        wizard.mana -= shootMana
+        if (wizard.house === '0') rmana.style.width = wizard.mana + '%'
+        if (wizard.house === '1') ymana.style.width = wizard.mana + '%'
+        if (wizard.house === '2') bmana.style.width = wizard.mana + '%'
+        if (wizard.house === '3') gmana.style.width = wizard.mana + '%'
 
-    if (game.time.now > nextFire && (input[1][0] || input[1][1])) {
-      fireBullet(wizard, input[1][0], input[1][1] * -1)
-      nextFire = game.time.now + FIRERATE
+        fireBullet(wizard, input[1][0], input[1][1] * -1)
+        nextFire = game.time.now + FIRERATE
+      }
     }
   }
 }
@@ -248,6 +286,7 @@ function fireBullet (wizard, x, y) {
     wizard.x + 40 * x + (x < 0 ? -30 : 0), wizard.y + 10 + (y < 0 ? 60 : 50) * y,
     'bullet5'
   )
+
   if (house === '0') bullet.tint = 0xcd2129
   else if (house === '1') bullet.tint = 0xe7c427
   else if (house === '2') bullet.tint = 0x0b9ed1
@@ -274,6 +313,10 @@ function fireBullet (wizard, x, y) {
 }
 
 function bulletCollided (wizard, bullet) {
+  if (wizard.player) {
+    wizard.player.time = getTimeRemaining()
+  }
+  wizard.alive = false
   wizardGroup.remove(wizard, false)
   bulletGroup.remove(bullet, true)
   console.log('Bullet collided with ' + wizard)
@@ -285,6 +328,10 @@ function bulletCollidedWall (wall, bullet) {
 }
 
 function wallCollided (wall, wizard) {
+  wizard.alive = false
+  if (wizard.player) {
+    wizard.player.time = getTimeRemaining()
+  }
   wizardGroup.remove(wizard, false)
 }
 
@@ -308,6 +355,7 @@ class Player {
     this.id = id
     this.house = house
     this.input = [[0, 0], [0, 0]]
+    this.time = NaN
   }
 
   updateInput (input) {
@@ -324,10 +372,13 @@ function onPlayerJoin (socketId, house) {
 }
 
 function onInputUpdate (socketId, inputData) {
-  // console.log('input-data', socketId, inputData)
   const player = players[socketId]
   if (!player) return
   player.updateInput(inputData)
+}
+
+function onBuff (socketId, buff) {
+  console.log('buff!', socketId, buff)
 }
 
 socket.on('connect', () => {
@@ -336,6 +387,7 @@ socket.on('connect', () => {
 
   socket.on('player-join', onPlayerJoin)
   socket.on('input-update', onInputUpdate)
+  socket.on('buff', onBuff)
 })
 
 window.startGame = function () {
@@ -350,6 +402,7 @@ window.startGame = function () {
       playerWizards.push(player)
       wizards[playerWizards.length - 1].loadTexture(houseNumSprite[player.house], 0)
       wizards[playerWizards.length - 1].house = houseId
+      wizards[playerWizards.length - 1].player = player
     }
   }
   socket.emit('promote-players', promoted)

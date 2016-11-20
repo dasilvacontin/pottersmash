@@ -66,6 +66,35 @@
 
   #waiting > p { font-size: 60px; color: white }
 
+  #spectator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+  }
+
+  /* SPECTATOR STUFF */
+  html, body {
+    height: 100%;
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
+  }
+
+  .buff-button {
+    width: 50%;
+    height: 100%;
+    background: black;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 60px;
+  }
+
   </style>
 </head>
 <body>
@@ -94,6 +123,12 @@
     </div>
 
     <canvas class="hide" id="player-controller"></canvas>
+
+    <div id="spectator" >
+      <div class="buff-button" data-buff="MANA" style="background: blue">Mana</div>
+      <div class="buff-button" data-buff="SPEED" style="background: #ffab00">Speed</div>
+    </div>
+
   </div>
   <script src="companion.js"></script>
 </body>

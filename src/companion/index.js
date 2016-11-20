@@ -27,6 +27,9 @@ for (let i = 1; i < selector.children.length; ++i) {
 const waitingView = document.getElementById('waiting')
 waitingView.style.display = 'none'
 
+const spectatorView = document.getElementById('spectator')
+spectatorView.style.display = 'none'
+
 var canvas = document.getElementById('player-controller')
 console.log('Im the companion app!')
 
@@ -35,33 +38,47 @@ const elements = [
   new Joystick(0, 0)
 ]
 
+function initPlayer () {
+  canvas.style.display = 'block'
+  window.onresize = resized
+  window.addEventListener('touchstart', touchStart)
+  window.addEventListener('touchmove', touchMove)
+  window.addEventListener('touchend', touchEnd)
+  resized()
+}
+
+function unsetPlayer () {
+  canvas.style.display = 'none'
+  window.onresize = null
+  window.removeEventListener('touchstart', touchStart)
+  window.removeEventListener('touchmove', touchMove)
+  window.removeEventListener('touchend', touchEnd)
+}
+
 /* eslint-disable no-unused-vars */
 function selectHouse (id) {
   requestFullscreen(document.documentElement)
   house = id
+  shield.src = `/images/${houseNames[house]}_scaled.png`
   socket = io()
   socket.on('connect', () => {
     socket.emit('player-join', house)
-    house = id
-    shield.src = `/images/${houseNames[house]}_scaled.png`
     selector.style.display = 'none'
-    canvas.style.display = 'block'
-    window.onresize = resized
-    window.addEventListener('touchstart', touchStart)
-    window.addEventListener('touchmove', touchMove)
-    window.addEventListener('touchend', touchEnd)
-    resized()
 
     waitingView.style.display = 'block'
     socket.on('promote-players', (players) => {
       waitingView.style.display = 'none'
+      spectatorView.style.display = 'none'
+      unsetPlayer()
 
       if (players.indexOf(socket.id) !== -1) {
         // is player
         alert('you are player')
+        initPlayer()
       } else {
         // is spectator
         alert('you are spectator')
+        spectatorView.style.display = 'flex'
       }
     })
   })
@@ -200,3 +217,14 @@ function sendInputUpdate () {
     socket.emit('input-update', currData)
   }
 }
+
+/* SUPPORT SPECTATOR */
+var buttons = document.querySelectorAll('.buff-button')
+for (var item of buttons) {
+  item.onclick = tap
+}
+
+function tap () {
+  socket.emit('buff', this.getAttribute('data-buff'))
+}
+/* SUPPORT END */

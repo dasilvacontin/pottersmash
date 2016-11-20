@@ -27,6 +27,7 @@
       box-sizing: content-box;
       background: rgba(0, 0, 0, 0.7);
     }
+<<<<<<< HEAD
 
     #round {
       position: absolute;
@@ -64,10 +65,32 @@
 
   #waiting > p { font-size: 60px; color: white }
 
+=======
+    #floatleft{
+      width: 80%;
+      position: absolute;
+      margin-top: 5px;
+    }
+    #floatleft div.w3-progress-container{
+      height: 40px;
+      margin-bottom: 10px;
+      margin-left: 30px;
+    }
+    #floatlefttrue{
+      float:left;
+      width: 35%;
+    }
+    #floatrighttrue{
+      float: right;
+      width: 35%;
+    }
+>>>>>>> c02c4ce9442f4f11210aa1bda26d693262bf23c2
 
   </style>
+  <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
 </head>
 <body>
+<<<<<<< HEAD
   <div id="round">
     <p>Next round!</p>
   </div>
@@ -76,7 +99,27 @@
     <p>Game Over!</p>
   </div>
 
+=======
+    <div id="floatleft">
+    <div id="floatlefttrue">
+    <div class="w3-progress-container w3-pale-blue">
+    <div class="w3-progressbar w3-blue" style="width:100%" id="raven"></div>
+    </div>
+    <div class="w3-progress-container w3-pale-red">
+    <div class="w3-progressbar w3-red" style="width:100%" id="grif"></div>
+    </div>
+  </div>
+>>>>>>> c02c4ce9442f4f11210aa1bda26d693262bf23c2
   <div id="countdown"><span>18s</span></div>
+    <div id="floatrighttrue">
+    <div class="w3-progress-container w3-pale-yellow">
+    <div class="w3-progressbar w3-yellow" style="width:100%" id="huff"></div>
+    </div>
+    <div class="w3-progress-container w3-pale-green">
+    <div class="w3-progressbar w3-green" style="width:100%" id="slyth"></div>
+    </div>
+  </div>
+  </div>
   <script src="host.js"></script>
 </body>
 </html>
