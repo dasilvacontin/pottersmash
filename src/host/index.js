@@ -29,24 +29,20 @@ let houseNumSprite = {
 let nextFire
 const FIRERATE = 300
 let startGameDate
+let finished = false
 
 function getTimeRemaining () {
   let t = Date.parse(new Date()) - startGameDate
   let seconds = Math.floor((t / 1000) % 60)
-  return 25 - seconds
+  return 20 - seconds
 }
 
-/*
-function endGame() {
-  let t = getTimeRemaining()
-  if (t < 0) {
-    //do something
-  }
-  else if (t < 10) {
-    //start dead spiral
-  }
+function endGame () {
+  finished = true
+  // show screen of round over
+
+  // reset all
 }
-*/
 
 function preload () {
   // asset loading stuff goes here
@@ -185,8 +181,11 @@ function update () {
       }
     }
   } else updateAllWizards()
-  let t = getTimeRemaining()
-  timer.innerHTML = t + 's'
+
+  if (!finished) {
+    let t = getTimeRemaining()
+    timer.innerHTML = t + 's'
+  }
 }
 
 function updateAllWizards () {
@@ -215,7 +214,6 @@ function fireBullet (wizard, x, y) {
     wizard.x + 40 * x + (x < 0 ? -30 : 0), wizard.y + 10 + (y < 0 ? 60 : 50) * y,
     'bullet5'
   )
-  debugger
   if (house === '0') bullet.tint = 0xcd2129
   else if (house === '1') bullet.tint = 0xe7c427
   else if (house === '2') bullet.tint = 0x0b9ed1
@@ -316,4 +314,5 @@ window.startGame = function () {
     }
   }
   startGameDate = Date.parse(new Date())
+  setTimeout(endGame, 20000)
 }
