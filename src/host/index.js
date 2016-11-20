@@ -11,17 +11,31 @@ const game = new Phaser.Game(
   { preload, create, update, render }
 )
 
-let playerGroup, cursors, keys, bulletGroup
-let players, bullets
+let playerGroup, cursors, keys, bulletGroup, wallGroup
+let players, bullets, walls
 // let fire = false
 // let fireKey
 let nextFire
 const FIRERATE = 100
 
+let map = [
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+[1, 1, 0, 0, 0, 0, 0, 1, 0, 1],
+[1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
+[1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+[1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+[1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+[1, 0, 1, 0, 1, 0, 0, 0, 0, 1],
+[1, 1, 0, 0, 0, 0, 0, 1, 0, 1],
+[1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+]
+
 function preload () {
   // asset loading stuff goes here
   game.load.image('wizard', 'images/wizardSmall.png')
   game.load.image('bullet5', 'images/bullet.png')
+  game.load.image('wall', 'images/wall.jpg')
 }
 
 function create () {
@@ -30,6 +44,24 @@ function create () {
   game.physics.startSystem(Phaser.Physics.ARCADE)
   game.physics.arcade.gravity.y = 0
   game.physics.arcade.sortDirection = Phaser.Physics.Arcade.BOTTOM_TOP
+
+  walls = []
+  wallGroup = game.add.group()
+  wallGroup.enableBody = true
+  wallGroup.physicsBodyType = Phaser.Physics.ARCADE
+  for (let i = 0; i < map.length; ++i) {
+    for (let j = 0; j < map.length; j++) {
+      if (map[i][j]) {
+        const wall = wallGroup.create(100 * i, 100 * j, 'wall')
+        wall.anchor.x = 0.5
+        wall.body.setSize(100, 100, 0, 0)
+        wall.body.collideWorldBounds = false
+        wall.body.immovable = true
+        wall.body.moves = false
+        walls.push(wall)
+      }
+    }
+  }
 
   playerGroup = game.add.group()
   playerGroup.enableBody = true
@@ -43,7 +75,7 @@ function create () {
       'wizard'
     )
     player.anchor.x = 0.5
-    player.body.setSize(100, 100, 0, 0)
+    player.body.setSize(80, 80, 0, 0)
     player.body.bounce.setTo(0.8, 0.8)
     player.body.collideWorldBounds = true
     players.push(player)
@@ -77,6 +109,8 @@ const FSPEED = 200
 function update () {
   game.physics.arcade.collide(playerGroup)
   game.physics.arcade.collide(playerGroup, bulletGroup, bulletCollided)
+  game.physics.arcade.collide(playerGroup, wallGroup)
+  game.physics.arcade.collide(wallGroup, bulletGroup, bulletCollidedWall)
 
   const player = players[0]
   player.body.velocity.x = SPEED * Number(keys.right.isDown) - SPEED * Number(keys.left.isDown)
@@ -111,9 +145,15 @@ function bulletCollided (player, bullet) {
   console.log('Bullet collided with ' + player)
 }
 
+function bulletCollidedWall (wall, bullet) {
+  bulletGroup.remove(bullet, true)
+  console.log('Bullet collided with ' + wall)
+}
+
 function render () {
   players.forEach(player => game.debug.body(player))
   bullets.forEach(bullet => game.debug.body(bullet))
+  walls.forEach(wall => game.debug.body(wall))
 }
 
 function resize () {
