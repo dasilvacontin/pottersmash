@@ -63,6 +63,7 @@ function createWizard (tx, ty) {
   wizard.body.setSize(60, 60, 20, 0)
   wizard.body.bounce.setTo(0.8, 0.8)
   wizard.body.collideWorldBounds = true
+  wizard.alive = true
   wizards.push(wizard)
 }
 
@@ -226,13 +227,15 @@ function drawBlock (x, y) {
 function updateAllWizards () {
   for (let i = 0; i < playerWizards.length; ++i) {
     let wizard = wizards[i]
-    let input = playerWizards[i].input
+    if (wizard.alive) {
+      let input = playerWizards[i].input
 
-    moveWizard(wizard, input[0])
+      moveWizard(wizard, input[0])
 
-    if (game.time.now > nextFire && (input[1][0] || input[1][1])) {
-      fireBullet(wizard, input[1][0], input[1][1] * -1)
-      nextFire = game.time.now + FIRERATE
+      if (game.time.now > nextFire && (input[1][0] || input[1][1])) {
+        fireBullet(wizard, input[1][0], input[1][1] * -1)
+        nextFire = game.time.now + FIRERATE
+      }
     }
   }
 }
@@ -275,6 +278,7 @@ function fireBullet (wizard, x, y) {
 
 function bulletCollided (wizard, bullet) {
   wizardGroup.remove(wizard, false)
+  wizard.alive = false
   bulletGroup.remove(bullet, true)
   console.log('Bullet collided with ' + wizard)
 }
@@ -285,6 +289,7 @@ function bulletCollidedWall (wall, bullet) {
 }
 
 function wallCollided (wall, wizard) {
+  wizard.alive = false
   wizardGroup.remove(wizard, false)
 }
 
