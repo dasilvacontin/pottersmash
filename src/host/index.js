@@ -15,8 +15,10 @@ const game = new Phaser.Game(
   { preload, create, update, render }
 )
 
-let wizardGroup, cursors, keys, bulletGroup, wallGroup
+let wizardGroup, bulletGroup, wallGroup
+// let cursors, keys
 let wizards, bullets, walls
+let playerWizards = []
 // let fire = false
 // let fireKey
 let nextFire
@@ -117,13 +119,13 @@ function create () {
   bulletGroup.enableBody = true
   bulletGroup.physicsBodyType = Phaser.Physics.ARCADE
 
-  cursors = game.input.keyboard.createCursorKeys()
-  keys = {
-    up: game.input.keyboard.addKey(Phaser.KeyCode.W),
-    left: game.input.keyboard.addKey(Phaser.KeyCode.A),
-    down: game.input.keyboard.addKey(Phaser.KeyCode.S),
-    right: game.input.keyboard.addKey(Phaser.KeyCode.D)
-  }
+  // cursors = game.input.keyboard.createCursorKeys()
+  // keys = {
+  //   up: game.input.keyboard.addKey(Phaser.KeyCode.W),
+  //   left: game.input.keyboard.addKey(Phaser.KeyCode.A),
+  //   down: game.input.keyboard.addKey(Phaser.KeyCode.S),
+  //   right: game.input.keyboard.addKey(Phaser.KeyCode.D)
+  // }
   game.input.gamepad.start()
 
   nextFire = game.time.now + FIRERATE
@@ -143,18 +145,38 @@ function update () {
   game.physics.arcade.collide(wizardGroup, wallGroup)
   game.physics.arcade.collide(wallGroup, bulletGroup, bulletCollidedWall)
 
-  const wizard = wizards[0]
-  wizard.body.velocity.x = SPEED * Number(keys.right.isDown) - SPEED * Number(keys.left.isDown)
-  wizard.body.velocity.y = SPEED * Number(keys.down.isDown) - SPEED * Number(keys.up.isDown)
+  // const wizard = wizards[0]
+  // wizard.body.velocity.x = SPEED * Number(keys.right.isDown) - SPEED * Number(keys.left.isDown)
+  // wizard.body.velocity.y = SPEED * Number(keys.down.isDown) - SPEED * Number(keys.up.isDown)
+  //
+  // if (game.time.now > nextFire) {
+  //   let fx = Number(cursors.right.isDown) - Number(cursors.left.isDown)
+  //   let fy = Number(cursors.down.isDown) - Number(cursors.up.isDown)
+  //   if (fx !== 0 || fy !== 0) {
+  //     fireBullet(wizard, Number(fx), Number(fy))
+  //     nextFire = game.time.now + FIRERATE
+  //   }
+  // }
+  updateAllWizards()
+}
 
-  if (game.time.now > nextFire) {
-    let fx = Number(cursors.right.isDown) - Number(cursors.left.isDown)
-    let fy = Number(cursors.down.isDown) - Number(cursors.up.isDown)
-    if (fx !== 0 || fy !== 0) {
-      fireBullet(wizard, Number(fx), Number(fy))
+function updateAllWizards () {
+  for (let i = 0; i < playerWizards.length; ++i) {
+    let wizard = wizards[i]
+    let input = playerWizards[i].input
+
+    moveWizard(wizard, input[0])
+
+    if (game.time.now > nextFire && (input[1][0] || input[1][1])) {
+      fireBullet(wizard, input[1][0], input[1][1] * -1)
       nextFire = game.time.now + FIRERATE
     }
   }
+}
+
+function moveWizard (wizard, vec) {
+  wizard.body.velocity.x = SPEED * vec[0]
+  wizard.body.velocity.y = SPEED * vec[1] * -1
 }
 
 function fireBullet (wizard, x, y) {
@@ -216,10 +238,10 @@ function onPlayerJoin (socketId, house) {
 }
 
 function onInputUpdate (socketId, inputData) {
-  console.log('input-data', socketId, inputData)
+  // console.log('input-data', socketId, inputData)
   const player = players[socketId]
   if (!player) return
-  player.updateInput = inputData
+  player.updateInput(inputData)
 }
 
 socket.on('connect', () => {
@@ -230,4 +252,8 @@ socket.on('connect', () => {
   socket.on('input-update', onInputUpdate)
 })
 
-window.startGame = function () {}
+window.startGame = function () {
+  for (let playerId in players) {
+    playerWizards.push(players[playerId])
+  }
+}
