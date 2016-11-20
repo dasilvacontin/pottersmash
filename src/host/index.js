@@ -254,6 +254,13 @@ function drawBlock (x, y) {
   // walls.push(wall)
 }
 
+function updateWizardManaBar (wizard) {
+  if (wizard.house === '0') rmana.style.width = wizard.mana + '%'
+  if (wizard.house === '1') ymana.style.width = wizard.mana + '%'
+  if (wizard.house === '2') bmana.style.width = wizard.mana + '%'
+  if (wizard.house === '3') gmana.style.width = wizard.mana + '%'
+}
+
 function updateAllWizards () {
   for (let i = 0; i < playerWizards.length; ++i) {
     let wizard = wizards[i]
@@ -263,11 +270,7 @@ function updateAllWizards () {
 
       if (game.time.now > nextFire && (input[1][0] || input[1][1]) && wizard.mana > 0) {
         wizard.mana -= shootMana
-        if (wizard.house === '0') rmana.style.width = wizard.mana + '%'
-        if (wizard.house === '1') ymana.style.width = wizard.mana + '%'
-        if (wizard.house === '2') bmana.style.width = wizard.mana + '%'
-        if (wizard.house === '3') gmana.style.width = wizard.mana + '%'
-
+        updateWizardManaBar(wizard)
         fireBullet(wizard, input[1][0], input[1][1] * -1)
         nextFire = game.time.now + FIRERATE
       }
@@ -379,6 +382,12 @@ function onInputUpdate (socketId, inputData) {
 
 function onBuff (socketId, buff) {
   console.log('buff!', socketId, buff)
+  const player = players[socketId]
+  if (!player) return
+  const { house } = player
+  const wizard = wizards[Number(house)]
+  wizard.mana++
+  updateWizardManaBar(wizard)
 }
 
 socket.on('connect', () => {
