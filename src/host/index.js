@@ -184,8 +184,8 @@ function update () {
       }
     }
   } else updateAllWizards()
-  let t = getTimeRemaining()
-  //console.log(t)
+  // let t = getTimeRemaining()
+  // console.log(t)
 }
 
 function updateAllWizards () {
@@ -209,12 +209,18 @@ function moveWizard (wizard, vec) {
 }
 
 function fireBullet (wizard, x, y) {
+  let house = wizard.house
   const bullet = bulletGroup.create(
     wizard.x + 40 * x + (x < 0 ? -30 : 0), wizard.y + 10 + (y < 0 ? 60 : 50) * y,
     'bullet5'
   )
+  if (house === 0) bullet.tint = 0xcd2129
+  if (house === 1) bullet.tint = 0xe7c427
+  if (house === 2) bullet.tint = 0x0b9ed1
+  if (house === 3) bullet.tint = 0x21a047
+
   // bullet.anchor.x = 0.5
-  bullet.body.setSize(10, 10, 0, 0)
+  bullet.body.setSize(25, 25, 0, 0)
   bullet.body.collideWorldBounds = true
   bullet.body.velocity.y = FSPEED * y
   bullet.body.velocity.x = FSPEED * x
@@ -235,7 +241,7 @@ function bulletCollidedWall (wall, bullet) {
 
 function render () {
   wizards.forEach(wizard => game.debug.body(wizard))
-  bullets.forEach(bullet => game.debug.body(bullet))
+  //bullets.forEach(bullet => game.debug.body(bullet))
   walls.forEach(wall => game.debug.body(wall))
 }
 
@@ -291,6 +297,7 @@ window.startGame = function () {
       console.log('Selected ' + player.id)
       playerWizards.push(player)
       wizards[playerWizards.length - 1].loadTexture(houseNumSprite[houseId], 0)
+      wizards[playerWizards.length - 1].house = houseId
     }
   }
   startGameDate = Date.parse(new Date())
