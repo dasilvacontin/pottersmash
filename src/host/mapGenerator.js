@@ -1,6 +1,6 @@
 exports.getMap = function (rows, cols) {
   var map = initMatrix(rows + 1, cols + 1)
-  var newMap = cleanMatrix([6, 7, 8], [5, 6, 7, 8], 100, map, rows + 1, cols + 1)
+  var newMap = cleanMatrix([6, 7, 8], [6, 7, 8], 100, map, rows + 1, cols + 1)
   return newMap
 }
 
