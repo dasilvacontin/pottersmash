@@ -1,4 +1,10 @@
-# placeholder-hack-name
+# PotterSmash
+
+![PotterSmash Screen Shot](screenshot.png)
+
+Battle Arena videogame where the whole audience can participate using an smarthphone.
+
+## Dev
 
 Clone, `cd` in, and do `npm install`.
 
