@@ -1,4 +1,4 @@
-/* globals screen, Element, Image, alert */
+/* globals screen, Element, Image */
 // companion main file
 
 const { Joystick } = require('./joystick.js')
@@ -73,11 +73,9 @@ function selectHouse (id) {
 
       if (players.indexOf(socket.id) !== -1) {
         // is player
-        alert('you are player')
         initPlayer()
       } else {
         // is spectator
-        alert('you are spectator')
         spectatorView.style.display = 'flex'
       }
     })

@@ -208,12 +208,9 @@ function update () {
     if (game.time.now > nextFire) {
       let fx = Number(cursors.right.isDown) - Number(cursors.left.isDown)
       let fy = Number(cursors.down.isDown) - Number(cursors.up.isDown)
-      if ((fx !== 0 || fy !== 0) && wizard.mana > 0) {
+      if ((fx !== 0 || fy !== 0) && wizard.mana >= shootMana) {
         wizard.mana -= shootMana
-        if (wizard.house === '0') rmana.style.width = wizard.mana + '%'
-        if (wizard.house === '1') ymana.style.width = wizard.mana + '%'
-        if (wizard.house === '2') bmana.style.width = wizard.mana + '%'
-        if (wizard.house === '3') gmana.style.width = wizard.mana + '%'
+        updateWizardManaBar(wizard)
         fireBullet(wizard, Number(fx), Number(fy))
         nextFire = game.time.now + FIRERATE
       }
@@ -260,6 +257,7 @@ function updateWizardManaBar (wizard) {
   if (wizard.house === '1') ymana.style.width = wizard.mana + '%'
   if (wizard.house === '2') bmana.style.width = wizard.mana + '%'
   if (wizard.house === '3') gmana.style.width = wizard.mana + '%'
+  console.log(wizards.map(wizard => wizard.mana).join(','))
 }
 
 function updateAllWizards () {
@@ -269,7 +267,7 @@ function updateAllWizards () {
       let input = playerWizards[i].input
       moveWizard(wizard, input[0])
 
-      if (game.time.now > nextFire && (input[1][0] || input[1][1]) && wizard.mana > 0) {
+      if (game.time.now > nextFire && (input[1][0] || input[1][1]) && wizard.mana >= shootMana) {
         wizard.mana -= shootMana
         updateWizardManaBar(wizard)
         fireBullet(wizard, input[1][0], input[1][1] * -1)
@@ -386,8 +384,9 @@ function onBuff (socketId, buff) {
   const player = players[socketId]
   if (!player) return
   const { house } = player
-  const wizard = wizards[Number(house)]
-  wizard.mana++
+  for (let wizard of wizards) {
+    if (wizard.house == house) wizard.mana++
+  }
   updateWizardManaBar(wizard)
 }
 
